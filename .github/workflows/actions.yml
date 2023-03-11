@@ -21,6 +21,9 @@ jobs:
     - name: Execute tests via PHPUnit
       run: vendor/bin/phpunit
 
+    - name: Execute PHPBF
+      run: vendor/bin/phpcbf --standard=PSR12 src/
+
     - name: Execute PHPCS
       run: vendor/bin/phpcs --standard=PSR12 src/
 
