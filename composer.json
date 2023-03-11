@@ -1,6 +1,7 @@
 {
     "name": "kingpabel/quickstart",
     "description": "Basic Quickstart for PHP.",
+    "license": "MIT",
     "require": {
         "php": "^8.1"
     },
