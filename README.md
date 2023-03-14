@@ -1,18 +1,17 @@
 # Quickstart
 
-## Docker
+## Run application
 
-**Build and run the script**
+To make it easier, the project can be run inside Docker container which has all the necessary setup with required dependencies
+
+#### Build Docker image
 
 ```sh
-docker build -t php-script .
-docker run -it --rm php-script
+docker build . -t php-dev
 ```
 
-**Build and run testCases**
+#### Lunch Docker Container
 
 ```sh
-docker build -t php-script .
-docker run -it --rm --entrypoint bash php-script
-vendor/bin/phpunit
+docker run -it -v "$(pwd):/usr/src/app" -w "/usr/src/app" --name app-quickstart php-dev bash
 ```
