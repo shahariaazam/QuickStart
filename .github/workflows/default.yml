@@ -1,0 +1,83 @@
+name: PHP Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: [7.4, 8.1]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Cache Vendor Directory
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.php-version }}-vendor-
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: intl
+      - name: Install Dependencies
+        run: composer install --no-progress --no-suggest
+
+  test:
+    needs: build
+    strategy:
+      matrix:
+        php-version: [7.4, 8.1]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Cache Vendor Directory
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.php-version }}-vendor-
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: intl
+      - name: PHPUnit Tests
+        run: vendor/bin/phpunit
+
+  coding_standard_checks:
+    needs: build
+    strategy:
+      matrix:
+        php-version: [7.4, 8.1]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Cache Vendor Directory
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.php-version }}-vendor-
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: intl
+      - name: Install PHP Code Sniffer
+        run: composer require --dev "squizlabs/php_codesniffer=*"
+      - name: PHP Code Sniffer
+        run: vendor/bin/phpcs --standard=PSR2 src/
